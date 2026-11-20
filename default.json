@@ -1,0 +1,56 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared dependency policy for Enashka repos. Each repo's renovate.json extends this and adds only its own exceptions.",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "timezone": "Europe/Paris",
+  "schedule": ["before 6am on monday"],
+  "minimumReleaseAge": "3 days",
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "platformAutomerge": false,
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "description": "Security fixes skip the schedule and the release-age wait, and are never merged automatically.",
+    "labels": ["dependencies", "security"],
+    "minimumReleaseAge": null,
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "packageRules": [
+    {
+      "description": "One weekly PR for all minor and patch updates. Renovate merges it only once every check is green; repos with no checks on GitHub never automerge (Renovate refuses without status checks).",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "non-major dependencies",
+      "automerge": true
+    },
+    {
+      "description": "Below 1.0 a minor bump may break: treat it like a major.",
+      "matchUpdateTypes": ["minor"],
+      "matchCurrentVersion": "<1.0.0",
+      "groupName": null,
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Majors open only when ticked on the Dependency Dashboard, and are never automerged.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "GitHub Actions in one PR, merged once checks are green.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "automerge": true
+    },
+    {
+      "description": "@futurproche/brand is vendored from the futurproche-brand repo by brand:sync, never updated by Renovate.",
+      "matchPackageNames": ["@futurproche/brand"],
+      "enabled": false
+    }
+  ]
+}
